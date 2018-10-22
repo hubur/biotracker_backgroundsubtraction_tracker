@@ -52,7 +52,7 @@ build windows:
   before_script:
     - 'curl.exe -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/2576/jobs/artifacts/master/download?job=package%20windows"'
     - 7z e artifacts.zip
-    - 'curl.exe -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3199/jobs/artifacts/master/download?job=package%20windows"'
+    - 'curl.exe -o artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "https://git.imp.fu-berlin.de/api/v4/projects/3610/jobs/artifacts/master/download?job=package%20windows"'
     - 7z e artifacts.zip
     - 7z e *.tar.xz; Remove-Item -Force *.tar.xz; 7z x *.tar; Remove-Item -Force *.tar
     - New-Item -ItemType Directory -Force 'dependencies'
