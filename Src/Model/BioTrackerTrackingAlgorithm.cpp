@@ -2,6 +2,7 @@
 #include <future>
 #include "TrackedComponents/TrackedComponentFactory.h"
 #include <chrono>
+#include <fstream>
 
 BioTrackerTrackingAlgorithm::BioTrackerTrackingAlgorithm(IController *parent, IModel* parameter, IModel* trajectory) : _ipp((TrackerParameter*)parameter)
 {
@@ -103,13 +104,27 @@ std::vector<BlobPose> BioTrackerTrackingAlgorithm::getContourCentroids(cv::Mat& 
     std::vector<cv::Vec4i> hierarchy;
     std::vector<BlobPose> centroids;
 
+    std::ofstream outfile("/root/outfile.jsonl", std::ios_base::app);
+    outfile << "[";
+
     findContours( image, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
+    float j=0;
     for(auto x: contours){
         cv::Point2f c(0,0);
         float i=0;
+
+        outfile << "[";
         for(auto y: x){
             c += cv::Point2f(y);
             i++;
+            outfile << "{\"x\":" << y.x << ",\"y\":" << y.y << "}";
+            if (i <= x.size() - 1) {
+                outfile << ",";
+            }
+        }
+        outfile << "]";
+        if (++j <= contours.size() - 1) {
+            outfile << ",";
         }
         c.x = c.x / i;
         c.y = c.y / i;
@@ -121,6 +136,8 @@ std::vector<BlobPose> BioTrackerTrackingAlgorithm::getContourCentroids(cv::Mat& 
         BlobPose bc(_AreaInfo->pxToCm(c), c, bb.angle, bb.size.width, bb.size.height);
         centroids.push_back(bc);
     }
+    outfile << "]\n";
+    outfile.close();
     
     return centroids;
 }
